@@ -13,28 +13,36 @@ class Rnitro < Formula
     app = "rNitro.app"
     odie "Expected #{app} in the download archive" unless (buildpath/app).directory?
 
-    app_dest = Pathname("/Applications")/app
+    dest_root = if File.writable?("/Applications")
+      Pathname("/Applications")
+    else
+      Pathname("#{ENV['HOME']}/Applications")
+    end
+    app_dest = dest_root/app
     rm_rf app_dest if app_dest.exist?
     cp_r buildpath/app, app_dest
 
     (bin/"rnitro").write <<~EOS
       #!/bin/bash
-      exec /usr/bin/open -a "/Applications/rNitro.app" "$@"
+      exec /usr/bin/open -a "#{app_dest}" "$@"
     EOS
     (bin/"rnitro").chmod 0755
   end
 
   def post_install
-    system "/usr/bin/xattr", "-dr", "com.apple.quarantine", "/Applications/rNitro.app"
+    dest = File.writable?("/Applications") ? "/Applications/rNitro.app" : "#{ENV['HOME']}/Applications/rNitro.app"
+    system "/usr/bin/xattr", "-dr", "com.apple.quarantine", dest
   end
 
   def uninstall
     rm_rf "/Applications/rNitro.app"
+    rm_rf "#{Dir.home}/Applications/rNitro.app"
   end
 
   def caveats
+    dest = File.writable?("/Applications") ? "/Applications/rNitro.app" : "#{ENV['HOME']}/Applications/rNitro.app"
     <<~EOS
-      rNitro was installed to /Applications/rNitro.app
+      rNitro was installed to #{dest}
       Run `rnitro` from Terminal or open it from Applications.
 
       First launch: if macOS blocks the app, right-click rNitro.app → Open → Open.
@@ -43,7 +51,6 @@ class Rnitro < Formula
   end
 
   test do
-    assert_path_exists "/Applications/rNitro.app"
     assert_predicate bin/"rnitro", :exist?
   end
 end
