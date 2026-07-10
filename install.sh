@@ -3,9 +3,9 @@
 # Use when Homebrew is unavailable or /opt/homebrew is not writable.
 set -euo pipefail
 
-URL="https://github.com/ilikemacos/rNitro/releases/download/v8.3.5-Final/rNitro-v8.3.5-Final-arm64.zip"
-SHA="8eee9058c7b9dc23cb265edef7214b1a5aa96c4fde29ac3f34550005ddc139a6"
-VERSION="v8.3.5 Final"
+URL="https://github.com/ilikemacos/rNitro/releases/download/v8.3.6-Final/rNitro-v8.3.6-Final-arm64.zip"
+SHA="0cbda46b537adf349c38c6dc3f5d080d866d601eb2a75009b61346c67a03002a"
+VERSION="v8.3.6 Final"
 
 if [[ "$(uname -m)" != "arm64" ]]; then
   echo "rNitro requires Apple Silicon (arm64)." >&2
